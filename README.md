@@ -33,15 +33,18 @@ TODO: Write usage instructions here
 
 ```ruby
 # app/actifications/user_actification.rb
-class UserActification < Actification::Base
+class ArticleActification < Actification::Base
   default from: current_user
 
-  class << self
-    def gather(article)
-      actice(to:       article.active_user,
-             body:     "#{auther.name} published 「#{articletitle}」",
-             link_url: article_url)
-    end
+  def publish_article(article)
+    actice(to:       article.active_user,
+           body:     "#{auther.name} published 「#{articletitle}」",
+           link_url: article_url)
+  end
+
+  def delete_article(article)
+    actice(to:   article.watch_user,
+           body: "#{auther.name} deleted 「#{articletitle}」")
   end
 end
 ```
@@ -49,17 +52,26 @@ end
 ```ruby
 # app/controllers/articles_controller.rb
 class ArticlesController < ApplicationController
-  UserActification.gather(@article)
 
   def create
     @article = Article.new(article_params)
 
     if @article.save
-      UserActification.gather(@article)
+      ArticleActification.publish_article(@article)
       redirect_to @article
     else
       render :new
     end
+  end
+end
+```
+
+```ruby
+# app/controllers/top_controller.rb
+class TopController < ApplicationController
+  def index
+    @actifications = Actification::Base.all
+    @article_actifications = ArticleActification.all
   end
 end
 ```
