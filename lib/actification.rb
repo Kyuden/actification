@@ -1,5 +1,7 @@
 require "actification/version"
 require 'actification/config'
+require 'actification/base'
+require 'actification/model'
 
 module Actification
   class << self
