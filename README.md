@@ -38,13 +38,14 @@ class ArticleActification < Actification::Base
 
   def publish_article(article)
     actice(to:       article.active_user,
-           body:     "#{auther.name} published 「#{articletitle}」",
-           link_url: article_url)
+           body:     "#{article.auther} published 「#{article.title}」",
+           link_url: article_path(article))
   end
 
   def delete_article(article)
     actice(to:   article.watch_user,
-           body: "#{auther.name} deleted 「#{articletitle}」")
+           from: article.user_id
+           body: "#{article.auther} deleted 「#{article.title}」")
   end
 end
 ```
@@ -70,8 +71,7 @@ end
 # app/controllers/top_controller.rb
 class TopController < ApplicationController
   def index
-    @actifications = Actification::Base.all
-    @article_actifications = ArticleActification.all
+    @actifications = Actification::Model.all
   end
 end
 ```
@@ -80,6 +80,9 @@ end
 # config/initializers/actification.rb
 Actification.configure do |config|
   config.cleaner = true
+
+  # To use root_path in xxxActification class
+  config.include Rails.application.routes.url_helpers
 end
 ```
 
