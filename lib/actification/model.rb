@@ -20,7 +20,11 @@ module Actification
       end
 
       def all_read_by!(user_id)
-        unread_by(user_id).update_attributes(read: true)
+        if Actification.config.cleaner?
+          unread_by(user_id).delete_all
+        else
+          unread_by(user_id).update_attributes(read: true)
+        end
       end
 
       def all_unread_by!(user_id)
@@ -29,7 +33,11 @@ module Actification
     end
 
     def read!
-      update_attributes!(read: true)
+      if Actification.config.cleaner?
+        destroy!
+      else
+        update_attributes!(read: true)
+      end
     end
 
     def unread!

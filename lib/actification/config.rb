@@ -6,6 +6,10 @@ module Actification
       @cleaner = false
     end
 
+    def cleaner?
+      cleaner
+    end
+
     def include(mod)
       Actification::Base.include(mod)
     end
