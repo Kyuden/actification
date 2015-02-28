@@ -23,12 +23,12 @@ module Actification
         if Actification.config.cleaner?
           unread_by(user_id).delete_all
         else
-          unread_by(user_id).update_attributes(read: true)
+          unread_by(user_id).update_all(read: true)
         end
       end
 
       def all_unread_by!(user_id)
-        unread_by(user_id).update_attributes(read: false)
+        read_by(user_id).update_all(read: false)
       end
     end
 
